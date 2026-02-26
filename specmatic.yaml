@@ -1,0 +1,56 @@
+version: 3
+systemUnderTest:
+  service:
+    $ref: "#/components/services/inventoryProjectionService"
+    runOptions:
+      $ref: "#/components/runOptions/inventoryProjectionService"
+dependencies:
+  services:
+    - service:
+        $ref: "#/components/services/catalogService"
+        runOptions:
+          $ref: "#/components/runOptions/catalogServiceMock"
+components:
+  sources:
+    centralContractRepo:
+      git:
+        url: https://github.com/specmatic-demo/central-contract-repository
+  services:
+    inventoryProjectionService:
+      description: "Inventory Projection Service"
+      definitions:
+        - definition:
+            source:
+              $ref: "#/components/sources/centralContractRepo"
+            specs:
+              - spec:
+                  path: "contracts/services/inventory-projection-service/http/openapi.yaml"
+              - spec:
+                  path: "contracts/services/inventory-projection-service/events/asyncapi.yaml"
+    catalogService:
+      description: "Catalog Service dependency"
+      definitions:
+        - definition:
+            source:
+              $ref: "#/components/sources/centralContractRepo"
+            specs:
+              - spec:
+                  path: "contracts/services/catalog-service/http/openapi.yaml"
+  runOptions:
+    inventoryProjectionService:
+      openapi:
+        type: test
+        host: localhost
+        port: 9013
+      asyncapi:
+        type: test
+        servers:
+          - host: "localhost:5415"
+            protocol: kafka
+          - host: tcp://localhost:1883
+            protocol: mqtt
+    catalogServiceMock:
+      openapi:
+        type: mock
+        host: localhost
+        port: 5214
