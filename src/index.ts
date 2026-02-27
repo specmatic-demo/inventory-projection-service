@@ -251,8 +251,21 @@ app.get('/health', (_req: Request, res: Response) => {
 });
 
 app.get('/inventory-projections/low-stock', (req: Request, res: Response) => {
-  const limitCandidate = typeof req.query.limit === 'string' ? Number.parseInt(req.query.limit, 10) : 50;
-  const limit = Number.isFinite(limitCandidate) && limitCandidate > 0 ? Math.min(limitCandidate, 500) : 50;
+  const limitRaw = req.query.limit;
+  if (limitRaw !== undefined) {
+    if (typeof limitRaw !== 'string' || !/^\d+$/.test(limitRaw)) {
+      res.status(400).json({ error: 'Invalid limit query parameter' });
+      return;
+    }
+
+    const parsed = Number.parseInt(limitRaw, 10);
+    if (!Number.isFinite(parsed) || parsed < 1 || parsed > 500) {
+      res.status(400).json({ error: 'Invalid limit query parameter' });
+      return;
+    }
+  }
+
+  const limit = typeof limitRaw === 'string' ? Number.parseInt(limitRaw, 10) : 50;
 
   const lowStockItems = Array.from(projections.values())
     .filter((projection) => projection.lowStock)
