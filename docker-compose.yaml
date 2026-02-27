@@ -6,15 +6,12 @@ services:
     depends_on:
       kafka:
         condition: service_healthy
-      mqtt:
-        condition: service_started
       kafka-topics-init:
         condition: service_completed_successfully
     ports:
       - "9013:9013"
     environment:
       - INVENTORY_PROJECTION_KAFKA_BROKERS=kafka:9092
-      - INVENTORY_PROJECTION_MQTT_URL=mqtt://mqtt:1883
       - CATALOG_BASE_URL=http://host.docker.internal:5214
   kafka:
     image: apache/kafka:latest
@@ -55,9 +52,3 @@ services:
       "/opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --create --if-not-exists --topic inventory.adjusted --partitions 1 --replication-factor 1 &&
        /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --create --if-not-exists --topic order.created --partitions 1 --replication-factor 1 &&
        /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --create --if-not-exists --topic inventory.low.stock --partitions 1 --replication-factor 1"
-  mqtt:
-    image: eclipse-mosquitto:2
-    container_name: inventory-projection-service-mqtt
-    restart: unless-stopped
-    ports:
-      - "1883:1883"

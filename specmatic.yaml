@@ -47,8 +47,8 @@ components:
         servers:
           - host: "localhost:5415"
             protocol: kafka
-          - host: tcp://localhost:1883
-            protocol: mqtt
+          - host: localhost:9092
+            protocol: kafka
     catalogServiceMock:
       openapi:
         type: mock
