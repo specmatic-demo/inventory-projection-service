@@ -9,6 +9,20 @@ if [[ $# -ne 1 ]]; then
   exit 1
 fi
 
+FILTER_POOL=(
+  "STATUS = '200'"
+  "STATUS >= '300'"
+  "STATUS >= '400'"
+  "(METHOD = 'GET') || (METHOD = 'POST')"
+  "(METHOD = 'POST' || METHOD = 'PUT') || STATUS = '200'"
+  "!(STATUS = '202')"
+  "RESPONSE.CONTENT-TYPE = 'application/json'"
+  "REQUEST-BODY.CONTENT-TYPE = 'application/json'"
+)
+
+FILTER_INDEX=$((RANDOM % ${#FILTER_POOL[@]}))
+export FILTER="${FILTER_POOL[$FILTER_INDEX]}"
+
 PROJECT_ARG="$1"
 
 if [[ ! -d "$PROJECT_ARG" ]]; then
