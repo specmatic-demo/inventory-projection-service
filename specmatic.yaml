@@ -15,6 +15,10 @@ components:
     centralContractRepo:
       git:
         url: https://github.com/specmatic-demo/central-contract-repository
+    catalogServiceRepo:
+      git:
+        url: https://github.com/specmatic-demo/catalog-service
+        branch: migrated_to_federated_repo
   services:
     inventoryProjectionService:
       description: "Inventory Projection Service"
@@ -32,10 +36,10 @@ components:
       definitions:
         - definition:
             source:
-              $ref: "#/components/sources/centralContractRepo"
+              $ref: "#/components/sources/catalogServiceRepo"
             specs:
               - spec:
-                  path: "contracts/services/catalog-service/http/openapi.yaml"
+                  path: "specs/openapi.yaml"
   runOptions:
     inventoryProjectionService:
       openapi:
