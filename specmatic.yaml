@@ -18,7 +18,6 @@ components:
     catalogServiceRepo:
       git:
         url: https://github.com/specmatic-demo/catalog-service
-        branch: migrated_to_federated_repo
   services:
     inventoryProjectionService:
       description: "Inventory Projection Service"
